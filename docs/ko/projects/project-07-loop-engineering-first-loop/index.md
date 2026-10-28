@@ -10,15 +10,6 @@
 
 세 가지 점진적인 실험을 할 것입니다: 먼저 작업을 수동에서 `/goal`으로 바꾸고, 그 다음 모니터링 작업을 `/loop` 타이머로 바꾸고, 마지막으로 완전한 메이커-체커 루프를 구축하여 **여러분이 루프 밖으로 나갔을 때 어떤 느낌인지** 경험할 것입니다.
 
-## 프로젝트 파일
-
-리포지토리 경로: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| 디렉토리 | 내용 | 하는 일 |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | 완전한 하네스(P06 최종 상태)가 있는 작은 지식 베이스 프로젝트로, AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md가 포함되어 있습니다. | 이 하네스를 자동으로 반복할 수 있는 하네스로 바꾸세요. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | 목표 루프, 타이머 루프, 메이커-체커 루프라는 세 가지 루프의 완전한 구현체와 루프 상태 파일, 검증 스크립트가 포함되어 있습니다. | 루프 설계 패턴과 상태 관리의 참고 자료 |
-
 ## 사용할 도구
 
 - Claude Code 또는 Codex

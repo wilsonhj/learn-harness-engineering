@@ -26,15 +26,14 @@
 - Feedback stored in separate feedback.json rather than inline in qa-history.json
 - Clean state reset uses `fs.rmSync` with `force: true` for idempotent cleanup
 - ConversationHistory uses expandable citation sections rather than always-visible
-- Benchmark scripts use bash timing rather than Node.js for zero-dependency operation
+- Benchmark: `benchmark.sh` compiles src/ with the project's own tsc and drives the real services via `benchmark-runner.js` (Node, no new dependencies); the first bash-only version only simulated work and crashed on float arithmetic
 
 **Issues**: None
 
-**Benchmark Results** (sample data):
-- Import 3 documents: ~120ms
-- Batch indexing: ~80ms (14 chunks)
-- Query "What is the architecture?": ~250ms with 2 citations
-- Query "meeting summary": ~180ms with 2 citations
-- Clean state reset: ~15ms
+**Benchmark Results** (`bash scripts/benchmark.sh`, real services, sample data; one run, exit 0, 4/4 tasks):
+- Import 3 documents: ~3ms
+- Batch indexing: ~2ms (21 chunks: 8 + 7 + 6)
+- 5 queries: ~2.0s total (~410ms avg, dominated by QaService's simulated 100-500ms delay), each with 2 citations
+- Earlier figures in this log (~120ms import, ~80ms / 14 chunks indexing) came from the pre-fix simulated script and were not reproduced; clean-state reset time is not measured by the benchmark beyond a pass/fail check
 
 **Next session**: No remaining features. Project 06 is complete.

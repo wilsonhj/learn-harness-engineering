@@ -8,15 +8,6 @@
 
 你会做三个递进的实验：先把一个任务从手动跑变成 `/goal` 自动跑，再把一个巡检任务变成 `/loop` 定时跑，最后做一个带 maker-checker 分离的完整循环，体验「人退到循环外面」是什么感觉。
 
-## 使用仓库里的项目
-
-仓库路径：[`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| 目录 | 里面有什么 | 做什么 |
-|------|----------|--------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | 一个带有完整 harness 的小型知识库项目（P06 完成态），包含 AGENTS.md、feature_list.json、init.sh、session-handoff.md、clean-state-checklist.md。 | 把这套 harness 改造成能自动循环的版本。 |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | 三个循环的完整实现：goal loop、loop timer loop、maker-checker loop，加上 loop 状态文件和验证脚本。 | 参考 loop 的设计方式和状态管理模式。 |
-
 ## 用什么工具
 
 - Claude Code 或 Codex

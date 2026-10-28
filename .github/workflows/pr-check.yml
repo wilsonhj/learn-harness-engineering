@@ -1,0 +1,89 @@
+name: PR checks
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Docs (anchors, project docs, build)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check heading anchor map
+        run: npm run anchors:check
+
+      - name: Validate project docs
+        run: npm run docs:validate-projects
+
+      - name: Build with VitePress
+        run: npm run docs:build
+
+  discover-apps:
+    name: Discover project apps
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.find.outputs.apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Find apps under projects/
+        id: find
+        run: |
+          # Every project-NN/starter, project-NN/solution and project-NN/solution/<variant>
+          # that has its own package.json (shared/ is a foundation, not an app).
+          apps=$(ls -d projects/project-*/starter projects/project-*/solution projects/project-*/solution/*/ 2>/dev/null \
+            | sed 's#/$##' \
+            | while read -r dir; do [ -f "$dir/package.json" ] && echo "$dir"; done \
+            | sort -u \
+            | jq -R . | jq -sc .)
+          echo "apps=$apps" >> "$GITHUB_OUTPUT"
+          echo "$apps"
+
+  apps:
+    name: App ${{ matrix.app }}
+    needs: discover-apps
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.discover-apps.outputs.apps) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # The apps have no lockfiles; skip install scripts (Electron binary download).
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Test
+        run: npm test

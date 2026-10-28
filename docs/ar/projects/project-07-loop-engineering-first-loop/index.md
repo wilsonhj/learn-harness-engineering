@@ -10,15 +10,6 @@
 
 ستقوم بثلاثة تجارب متتالية: أولاً تحول مهمة من يدوية إلى `/goal`، ثم تحول مهمة مراقبة إلى مؤقت `/loop`، وأخيراً بناء حلقة كاملة من نوع صانع-مدقق لتجربة شعور **عندما تخرج من الحلقة.**
 
-## ملفات المشروع
-
-مسار المستودع: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| الدليل | ما بداخله | ماذا تفعل |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | مشروع قاعدة معرفة صغير بـ Harness كامل (الحالة النهائية لـ P06)، بما في ذلك AGENTS.md، و feature_list.json، و init.sh، و session-handoff.md، و clean-state-checklist.md. | حوّل هذا الـ Harness إلى واحد يمكنه الحلقة تلقائيًا. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | تنفيذات كاملة لثلاث حلقات: حلقة هدف، وحلقة مؤقت، وحلقة صانع-مدقق، بالإضافة إلى ملفات حالة الحلقة ونصوص التحقق. | مرجع لأنماط تصميم الحلقة وإدارة الحالة. |
-
 ## الأدوات التي ستستخدمها
 
 - Claude Code أو Codex

@@ -10,15 +10,6 @@ Este é o projeto de transição do "Harness" para o "Loop". Você já sabe como
 
 Você fará três experimentos progressivos: primeiro transformar uma tarefa de manual para `/goal`, depois transformar uma tarefa de monitoramento em um temporizador `/loop`, e finalmente construir um loop completo maker-checker para experimentar como é quando **você sai do loop.**
 
-## Arquivos do Projeto
-
-Caminho no repositório: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| Diretório | O Que Há Dentro | O Que Você Faz |
-|-----------|----------------|---------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | Um pequeno projeto de base de conhecimento com um harness completo (estado final do P06), incluindo AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md. | Transforme este harness em um que consegue fazer loop automaticamente. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | Implementações completas de três loops: loop de objetivo, loop de temporizador, loop maker-checker, além de arquivos de estado de loop e scripts de verificação. | Referência para padrões de design de loop e gerenciamento de estado. |
-
 ## Ferramentas Que Você Usará
 
 - Claude Code ou Codex

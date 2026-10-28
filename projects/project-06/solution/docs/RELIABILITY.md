@@ -109,16 +109,16 @@ Use the `clean-state-checklist.md` to verify:
 
 ### Overview
 
-The `scripts/benchmark.sh` script measures application performance across key operations. It uses file-based simulation to test the services layer without launching the Electron window.
+The `scripts/benchmark.sh` script measures application performance across key operations. It compiles `src/` with the project's TypeScript compiler and runs `scripts/benchmark-runner.js`, which drives the real `PersistenceService`, `DocumentService`, `IndexingService`, and `QaService` against a throwaway data directory, without launching the Electron window. It does not measure the UI/IPC layer. Requires `npm install` first; exits non-zero on any failure.
 
 ### Benchmark Tasks
 
 | Task | What It Measures | Target |
 |------|------------------|--------|
 | `import` | Document import throughput | 3 files in <1s |
-| `index` | Batch indexing speed | 14 chunks in <1s |
-| `query` | Q&A response latency | <500ms per question |
-| `verify` | Data integrity checks | 0 errors |
+| `index` | Batch indexing speed | 21 chunks (sample data) in <1s |
+| `query` | Q&A response latency (mock includes 100-500ms delay) | <1s per question |
+| `verify` | Data integrity checks (content round-trip, `resetAll`) | 0 errors |
 
 ### Running Benchmarks
 
@@ -128,12 +128,13 @@ bash scripts/benchmark.sh
 
 Output example:
 ```
-=== Benchmark Results ===
-[import] 3 files: 120ms (25.0 files/sec)
-[index]  3 documents: 80ms (175.0 chunks/sec)
-[query]  5 questions: 1250ms (250.0ms avg)
-[verify] Data integrity: PASS
-=== Summary: 4/4 tasks passed ===
+=== Benchmark Results (real services) ===
+Import: 3 files in 3.3ms
+Index:  21 chunks in 2.0ms
+Query:  5 queries in 2047.0ms
+Tasks passed: 4/4
+
+ALL BENCHMARKS PASSED
 ```
 
 ### Interpreting Results

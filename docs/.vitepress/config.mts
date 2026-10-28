@@ -891,7 +891,8 @@ export default withMermaid(
     description:
       "A project-based course on designing the environments, state, verification, and control systems that make Codex and Claude Code reliable.",
     cleanUrls: true,
-    srcExclude: ["temp/**"],
+    // Translator working notes for the Uzbek locale; kept in the repo but not published.
+    srcExclude: ["temp/**", "uz/GLOSSARY.md", "uz/STYLE-GUIDE.md"],
     ignoreDeadLinks: true,
     head: [['link', { rel: 'icon', type: 'image/svg+xml', href: brandLogo }]],
     themeConfig: {

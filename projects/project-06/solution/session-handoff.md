@@ -51,7 +51,7 @@ No remaining features for Project 06. All 15 features in feature_list.json are a
 - Used singleton Logger with factory method for per-service loggers over per-instance loggers
 - Feedback stored in dedicated feedback.json for separation of concerns
 - Clean state uses destructive rmSync over selective file deletion for simplicity
-- Benchmark scripts written in bash for zero-dependency operation
+- Benchmark script (bash) compiles src/ with tsc and runs scripts/benchmark-runner.js against the real services layer; no extra dependencies, no Electron
 - ConversationHistory uses virtual scrolling approach (simple state-based) over complex library
 
 ### Files Modified

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import { IPC_CHANNELS } from '../shared/types';
 
 const api = {
@@ -7,6 +7,10 @@ const api = {
     import: (filePath: string) => ipcRenderer.invoke(IPC_CHANNELS.IMPORT_DOCUMENT, filePath),
     get: (id: string) => ipcRenderer.invoke(IPC_CHANNELS.GET_DOCUMENT, id),
     delete: (id: string) => ipcRenderer.invoke(IPC_CHANNELS.DELETE_DOCUMENT, id),
+  },
+  files: {
+    // Electron 32+ removed File.path; webUtils resolves the real path of a dropped/selected file.
+    getPath: (file: Parameters<typeof webUtils.getPathForFile>[0]) => webUtils.getPathForFile(file),
   },
   indexing: {
     start: (documentId?: string) => ipcRenderer.invoke(IPC_CHANNELS.START_INDEXING, documentId),

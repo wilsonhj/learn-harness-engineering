@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 # audit-harness.sh — Zero-dependency shell audit for harness engineering
 # Usage: ./tools/audit-harness.sh [path/to/repo]
-#        curl -fsSL https://raw.githubusercontent.com/walkinglabs/learn-harness-engineering/main/tools/audit-harness.sh | bash -s -- /path/to/repo
-# Checks an existing repo for all five harness subsystems (L03–L12).
-# Exit 0 if all CRITICAL items pass; exit 1 otherwise.
+#        Prefer "download, read, then run" over piping curl into bash; see README "Tools".
+# Checks an existing repo against the five harness subsystems (Instructions, Tools,
+# Environment, State, Feedback) plus eight lecture-specific sections (L03, L05, L07-L12): about 70 checks in
+# all (the exact number depends on which files exist).
+# Read-only: it never writes to the audited repo.
+# Exit 0 if all CRITICAL items pass; exit 1 if any CRITICAL item fails;
+# exit 2 if the path argument is not a directory.
+# Vocabulary: accepts both the course's artifacts (claude-progress.md, session-handoff.md,
+# feature_list.json with "status": pass / not_started) and the template's
+# (PROGRESS.md, "state": passing / active).
 # No Node.js required — complements skills/harness-creator/scripts/validate-harness.mjs
 #
 # Course reference: https://walkinglabs.github.io/learn-harness-engineering/en/
@@ -12,6 +19,11 @@
 set -euo pipefail
 
 REPO="${1:-.}"
+
+if [[ ! -d "$REPO" ]]; then
+  echo "audit-harness.sh: error: '$REPO' is not a directory (usage: audit-harness.sh [path/to/repo])" >&2
+  exit 2
+fi
 
 # ── Colours ────────────────────────────────────────────────────────────────────
 RED='\033[0;31m'
@@ -104,6 +116,14 @@ makefile_has_target() {
   fi
 }
 
+# Progress/handoff file: the course uses claude-progress.md (and session-handoff.md);
+# the audit template uses PROGRESS.md. Accept any of them. Empty string if none exists.
+PROGRESS_FILE=""
+for _p in claude-progress.md PROGRESS.md session-handoff.md; do
+  if [[ -f "$REPO/$_p" ]]; then PROGRESS_FILE="$_p"; break; fi
+done
+PROGRESS_LABEL="${PROGRESS_FILE:-claude-progress.md}"
+
 echo -e "${BOLD}Harness Engineering Audit${RESET}"
 echo -e "Repo: ${REPO}"
 echo -e "Ref:  https://walkinglabs.github.io/learn-harness-engineering/en/"
@@ -126,9 +146,9 @@ if [[ "$inst" == "pass" ]]; then
   check_recommended "Hard constraints (MUST / MUST NOT) are stated" \
     "$(contains_pattern "$ipath" "(MUST|MUST NOT|must not|must never|constraint|forbidden|never)")" \
     "Add a Constraints section to $ipath with explicit MUST / MUST NOT rules."
-  check_recommended "State files are enumerated (PROGRESS.md, feature_list)" \
-    "$(contains_pattern "$ipath" "(PROGRESS\.md|feature_list|DECISIONS\.md|docs/decisions)")" \
-    "Reference PROGRESS.md, DECISIONS.md, and feature_list.json in $ipath so agents know where state lives."
+  check_recommended "State files are enumerated (claude-progress.md / PROGRESS.md, feature_list)" \
+    "$(contains_pattern "$ipath" "(claude-progress\.md|PROGRESS\.md|session-handoff|feature_list|DECISIONS\.md|docs/decisions)")" \
+    "Reference claude-progress.md (or PROGRESS.md), DECISIONS.md, and feature_list.json in $ipath so agents know where state lives."
   check_recommended "Documentation staleness rule present (update docs with code, no stale docs)" \
     "$(contains_pattern "$ipath" "(stale|staleness|same commit|doc.*update|update.*doc|outdated)")" \
     "Add a rule to $ipath: 'Update docs in the same commit as the code change — no stale documentation.'"
@@ -164,6 +184,13 @@ check_recommended "Module-level doc (ARCHITECTURE.md or CONSTRAINTS.md) co-locat
 # ── Subsystem 2: Tools ─────────────────────────────────────────────────────────
 header "Subsystem 2: Tools"
 
+_ipath_tools="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+_tools_cfg="$(any_file_match ".claude/settings.json" ".claude/settings.local.json" "mcp.json" ".mcp.json" ".codex/config.toml" ".cursor/mcp.json")"
+_tools_doc="$(contains_pattern "$_ipath_tools" "(MCP|permission|allowlist|denylist|allowed tools|forbidden|must not (run|use)|do not (run|use)|never (run|use))")"
+check_critical "Tool boundaries defined (scoped tool config, or allowed/forbidden tools stated in instructions)" \
+  "$([[ "$_tools_cfg" == "pass" || "$_tools_doc" == "pass" ]] && echo "pass" || echo "fail")" \
+  "Define what the agent may run: create .claude/settings.json (or .mcp.json) to scope tool access, or add an allowed/forbidden commands and tools section to $_ipath_tools."
+
 check_recommended "Tool access is scoped (settings.json, .claude/, or MCP config present)" \
   "$(any_file_match ".claude/settings.json" ".claude/settings.local.json" "mcp.json" ".mcp.json")" \
   "Create .claude/settings.json to scope which tools the agent is allowed to use."
@@ -175,8 +202,8 @@ check_recommended "MCP or tool integrations documented in instructions file" \
 header "Subsystem 3: Environment"
 
 check_critical "Dependency lockfile present" \
-  "$(any_file_match "package-lock.json" "yarn.lock" "pnpm-lock.yaml" "mix.lock" "Pipfile.lock" "poetry.lock" "requirements.txt" "Cargo.lock" "go.sum" "Gemfile.lock")" \
-  "Commit a dependency lockfile (package-lock.json, yarn.lock, requirements.txt, go.sum, etc.) so installs are reproducible."
+  "$(any_file_match "package-lock.json" "yarn.lock" "pnpm-lock.yaml" "mix.lock" "Pipfile.lock" "poetry.lock" "uv.lock" "Cargo.lock" "go.sum" "Gemfile.lock")" \
+  "Commit a dependency lockfile (package-lock.json, yarn.lock, poetry.lock, uv.lock, go.sum, etc.; a bare requirements.txt is not a lockfile unless fully pinned with hashes, e.g. via pip-compile) so installs are reproducible."
 
 check_recommended "Runtime version pinned (.tool-versions, .nvmrc, .python-version, etc.)" \
   "$(any_file_match ".tool-versions" ".nvmrc" ".node-version" ".python-version" ".ruby-version" ".java-version")" \
@@ -197,13 +224,14 @@ check_recommended "Single-command dev server target exists (make dev)" \
 # ── Subsystem 4: State ─────────────────────────────────────────────────────────
 header "Subsystem 4: State"
 
-check_critical "PROGRESS.md exists at repo root" "$(file_exists "PROGRESS.md")" \
-  "Create PROGRESS.md at the repo root with sections: Current State (commit hash + test status), In Progress, Next Steps, and Blockers."
+check_critical "Progress file exists at repo root (claude-progress.md, PROGRESS.md, or session-handoff.md)" \
+  "$([[ -n "$PROGRESS_FILE" ]] && echo "pass" || echo "fail")" \
+  "Create claude-progress.md (or PROGRESS.md) at the repo root with sections: Current State (commit hash + test status), In Progress, Next Steps, and Blockers."
 
-if [[ "$(file_exists "PROGRESS.md")" == "pass" ]]; then
-  check_recommended "PROGRESS.md references current task / in-progress work" \
-    "$(contains_pattern "PROGRESS.md" "(in.progress|current|task|next step|blocker|completed)")" \
-    "Add an '## In Progress' section to PROGRESS.md describing the current task."
+if [[ -n "$PROGRESS_FILE" ]]; then
+  check_recommended "$PROGRESS_FILE references current task / in-progress work" \
+    "$(contains_pattern "$PROGRESS_FILE" "(in.progress|current|task|goal|next step|next session|blocker|issues|completed|what was done)")" \
+    "Add an '## In Progress' section to $PROGRESS_FILE describing the current task."
 fi
 
 decisions_result="$(any_file_match "DECISIONS.md" "docs/decisions")"
@@ -212,7 +240,7 @@ check_recommended "DECISIONS.md or docs/decisions/ exists" "$decisions_result" \
 
 check_recommended "feature_list.json (or equivalent) exists" \
   "$(any_file_match "feature_list.json" "features.json" "features.md" "FEATURES.md")" \
-  "Create feature_list.json — an array of objects each with fields: id, behavior, verification, state (values: planned/active/passing)."
+  "Create feature_list.json — a list of features each with fields: id, a description (description or behavior), evidence (or verification), and status (or state), e.g. status: not_started / pass as in the course projects."
 
 if [[ "$(any_file_match "feature_list.json" "features.json")" == "pass" ]]; then
   fl_file=""
@@ -220,8 +248,9 @@ if [[ "$(any_file_match "feature_list.json" "features.json")" == "pass" ]]; then
     [[ -f "$_f" ]] && { fl_file="$_f"; break; }
   done
   if [[ -n "$fl_file" ]]; then
-    check_recommended "feature_list.json contains required fields (id, behavior, verification, state)" \
-      "$(grep -qE '"id"' "$fl_file" && grep -qE '"behavior"' "$fl_file" && grep -qE '"verification"' "$fl_file" && grep -qE '"state"' "$fl_file" && echo "pass" || echo "fail")"
+    check_recommended "feature_list.json contains required fields (id, description|behavior, evidence|verification, status|state)" \
+      "$(grep -qE '"id"' "$fl_file" && grep -qE '"(description|behavior|name)"' "$fl_file" && grep -qE '"(evidence|verification)"' "$fl_file" && grep -qE '"(status|state)"' "$fl_file" && echo "pass" || echo "fail")" \
+      "Give every entry in $(basename "$fl_file") an id, a description (or behavior), evidence (or verification), and a status (or state)."
   fi
 fi
 
@@ -245,29 +274,29 @@ header "L05: Cross-Session Continuity"
 
 ipath_l05="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
 
-check_critical "PROGRESS.md has a Current State block (commit hash + test status)" \
-  "$(contains_pattern "PROGRESS.md" "(last commit|current state|commit.*hash|test.*pass|passing.*fail)")" \
-  "Add a '## Current State' section to PROGRESS.md, e.g.: 'Last commit: abc1234 | make check: passing'. Update this on every clock-out."
+check_critical "Progress file has a current-state record (commit hash + test status, or a dated session log)" \
+  "$(contains_pattern "$PROGRESS_FILE" "(last commit|current state|commit.*hash|test.*pass|passing.*fail|session [0-9]+|what was done)")" \
+  "Add a '## Current State' section to $PROGRESS_LABEL, e.g.: 'Last commit: abc1234 | make check: passing'. Update this on every clock-out."
 
-check_recommended "Clock-in routine documented in instructions (read PROGRESS.md then run check)" \
+check_recommended "Clock-in routine documented in instructions (read $PROGRESS_LABEL then run check)" \
   "$(contains_pattern "$ipath_l05" "(clock.in|session start|before touching)")" \
-  "Add a Clock-in section to $ipath_l05: 'Before touching code: read PROGRESS.md, then run make check to confirm green baseline.'"
+  "Add a Clock-in section to $ipath_l05: 'Before touching code: read $PROGRESS_LABEL, then run make check to confirm green baseline.'"
 
-check_recommended "Clock-out routine documented in instructions (update PROGRESS.md then commit)" \
+check_recommended "Clock-out routine documented in instructions (update $PROGRESS_LABEL then commit)" \
   "$(contains_pattern "$ipath_l05" "(clock.out|session end|before closing)")" \
-  "Add a Clock-out section to $ipath_l05: 'Before closing: update PROGRESS.md current state + next steps, run make check, commit.'"
+  "Add a Clock-out section to $ipath_l05: 'Before closing: update $PROGRESS_LABEL current state + next steps, run make check, commit.'"
 
 check_recommended "Context anxiety / rushed-finish warning present in instructions" \
   "$(contains_pattern "$ipath_l05" "(context.*anxi|rushed|running low|skip verif|do not rush)")" \
-  "Add a warning to $ipath_l05: 'If running low on context, do NOT rush to finish — stop, update PROGRESS.md, and commit a clean checkpoint.'"
+  "Add a warning to $ipath_l05: 'If running low on context, do NOT rush to finish — stop, update $PROGRESS_LABEL, and commit a clean checkpoint.'"
 
 check_recommended "Commit message guidance (explain why, not just what) present" \
   "$(contains_pattern "$ipath_l05" "(commit.*why|why.*commit|explain why|not just what)")" \
   "Add commit guidance to $ipath_l05: 'Write commit messages that explain WHY the change was made, not just what changed.'"
 
-check_recommended "PROGRESS.md Next Steps section exists with specific actions" \
-  "$(contains_pattern "PROGRESS.md" "(next step|next action)")" \
-  "Add a '## Next Steps' section to PROGRESS.md listing specific, actionable items so the next session can start immediately."
+check_recommended "Progress file has a Next Steps section with specific actions" \
+  "$(contains_pattern "$PROGRESS_FILE" "(next step|next action|next session)")" \
+  "Add a '## Next Steps' section to $PROGRESS_LABEL listing specific, actionable items so the next session can start immediately."
 
 # ── L03: Repository as System of Record ───────────────────────────────────────
 header "L03: Repository as System of Record"
@@ -275,11 +304,11 @@ header "L03: Repository as System of Record"
 ipath_l03="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
 
 _durability="fail"
-if [[ -f "$REPO/PROGRESS.md" ]] && { [[ -f "$REPO/DECISIONS.md" ]] || [[ -d "$REPO/docs/decisions" ]]; }; then
+if [[ -n "$PROGRESS_FILE" ]] && { [[ -f "$REPO/DECISIONS.md" ]] || [[ -d "$REPO/docs/decisions" ]]; }; then
   _durability="pass"
 fi
-check_recommended "ACID – Durability: cross-session knowledge written to tracked files (PROGRESS + DECISIONS present)" "$_durability" \
-  "Both PROGRESS.md and DECISIONS.md (or docs/decisions/) must exist so cross-session knowledge is never lost in an agent's context window."
+check_recommended "ACID – Durability: cross-session knowledge written to tracked files (progress file + DECISIONS present)" "$_durability" \
+  "Both a progress file (claude-progress.md or PROGRESS.md) and DECISIONS.md (or docs/decisions/) must exist so cross-session knowledge is never lost in an agent's context window."
 
 check_recommended "ACID – Consistency: verifiable consistent-state predicate documented (make check / equivalent)" \
   "$(contains_pattern "$ipath_l03" "(make check|consistent state|exits 0|all tests pass|verification pipeline)")" \
@@ -300,28 +329,30 @@ ipath_l07="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
 
 check_recommended "WIP=1 rule present in instructions (one active feature at a time) [L07]" \
   "$(contains_pattern "$ipath_l07" "(WIP.?1|one.*active|active.*at.*time|single.*active|only.*one.*active|activate.*new.*feature|new.*feature.*while.*active)")" \
-  "Add a WIP=1 rule to $ipath_l07: 'Only one feature may have state=active at a time. Complete and move to passing before activating the next.'"
+  "Add a WIP=1 rule to $ipath_l07: 'Only one feature may be active (in progress) at a time. Complete it and mark it passing before activating the next.'"
 
 check_recommended "make vcr target exists in Makefile [L07]" \
   "$(makefile_has_target "vcr")" \
-  "Add a 'vcr:' target to Makefile that prints the VCR ratio: passing features / activated features (e.g. uses jq on feature_list.json)."
+  "Add a 'vcr:' target to Makefile that prints the VCR ratio: passing features / activated features (e.g. uses jq on the status field of feature_list.json)."
 
-# Runtime VCR check — compute from feature_list.json
+# Runtime VCR check — compute from feature_list.json.
+# Accepts the course vocabulary ("status": "pass" / "not_started") and the template's
+# ("state": "passing" / "active"). Counts occurrences, so minified JSON also works.
 if [[ "$(any_file_match "feature_list.json" "features.json")" == "pass" ]]; then
   _vcr_file=""
   for _f in "$REPO/feature_list.json" "$REPO/features.json"; do
     [[ -f "$_f" ]] && { _vcr_file="$_f"; break; }
   done
   if [[ -n "$_vcr_file" ]]; then
-    _vcr_active=0; _vcr_passing=0
-    if grep -q '"state":[[:space:]]*"active"' "$_vcr_file" 2>/dev/null; then
-      _vcr_active=$(grep -c '"state":[[:space:]]*"active"' "$_vcr_file")
-    fi
-    if grep -q '"state":[[:space:]]*"passing"' "$_vcr_file" 2>/dev/null; then
-      _vcr_passing=$(grep -c '"state":[[:space:]]*"passing"' "$_vcr_file")
-    fi
+    _vcr_key='"(status|state)"[[:space:]]*:[[:space:]]*"'
+    _vcr_total=$( (grep -oE "${_vcr_key}[^\"]*\"" "$_vcr_file" 2>/dev/null || true) | wc -l | tr -d ' ')
+    _vcr_active=$( (grep -oE "${_vcr_key}(active|in_progress|in-progress)\"" "$_vcr_file" 2>/dev/null || true) | wc -l | tr -d ' ')
+    _vcr_passing=$( (grep -oE "${_vcr_key}(passing|pass|passed|done)\"" "$_vcr_file" 2>/dev/null || true) | wc -l | tr -d ' ')
     _vcr_activated=$(( _vcr_active + _vcr_passing ))
-    if [[ "$_vcr_activated" -eq 0 ]]; then
+    if [[ "$_vcr_total" -eq 0 ]]; then
+      check_recommended "VCR cannot be computed: no \"status\" or \"state\" fields found in $(basename "$_vcr_file") [L07]" "fail" \
+        "Give each feature in $(basename "$_vcr_file") a \"status\" (or \"state\") field so the verified-completion ratio can be computed."
+    elif [[ "$_vcr_activated" -eq 0 ]]; then
       check_recommended "VCR: no activated features yet (OK to activate first feature) [L07]" "pass"
     elif [[ "$_vcr_active" -gt 0 ]]; then
       check_recommended "VCR = $_vcr_passing/$_vcr_activated — $_vcr_active active feature(s) not yet passing (VCR < 1.0) [L07]" "fail"
@@ -494,7 +525,7 @@ check_recommended "make clean-check target present [L12]" \
 
 check_recommended "Session exit checklist / clean-state referenced in instructions [L12]" \
   "$(contains_pattern "$ipath_l12" "(clean.state|clean-state|clean_state|session exit|exit checklist|debug artifact|no.*debug|remove.*debug)")" \
-  "Add a clean-state reference to the Clock-Out section in $ipath_l12: 'Run make clean-check before committing — confirms build, no debug artifacts, PROGRESS.md updated.'"
+  "Add a clean-state reference to the Clock-Out section in $ipath_l12: 'Run make clean-check before committing — confirms build, no debug artifacts, $PROGRESS_LABEL updated.'"
 
 check_recommended "Quality document present (module health scores) [L12]" \
   "$( [[ -f "$REPO/docs/quality-document.md" ]] || [[ -f "$REPO/templates/quality-document.md" ]] && echo "pass" || echo "fail" )" \

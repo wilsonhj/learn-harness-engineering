@@ -71,7 +71,7 @@
       "name": "Structured JSON Logging",
       "description": "All services emit structured JSON log entries with timestamp, level, service tag, message, and optional data payload.",
       "status": "pass",
-      "evidence": "logger.ts provides Logger class with DEBUG/INFO/WARN/ERROR levels, JSON.stringify output, ServiceLogger child loggers. All 5 services (persistence, document, indexing, qa, ipc-handlers) use logger.forService() with structured data payloads.",
+      "evidence": "logger.ts provides Logger class with DEBUG/INFO/WARN/ERROR levels, JSON.stringify output, ServiceLogger child loggers. All 5 log sources (persistence-service, document-service, indexing-service, qa-service, ipc-handlers) use logger.forService() child loggers with structured data payloads; main.ts still calls logger.info('main', ...) directly.",
       "testedAt": "2026-03-30T11:10:00Z"
     },
     {
@@ -103,7 +103,7 @@
       "name": "Benchmark Scripts",
       "description": "Performance benchmark suite measuring import throughput, indexing speed, query latency, and citation accuracy.",
       "status": "pass",
-      "evidence": "scripts/benchmark.sh defines task suite with timing for import, index, query, and verify operations. Outputs structured results.",
+      "evidence": "scripts/benchmark.sh compiles src/ with tsc and runs scripts/benchmark-runner.js against the real PersistenceService/DocumentService/IndexingService/QaService (no Electron) on data/sample-documents: import 3 files, index 21 chunks, 5 queries with citations, content round-trip + resetAll integrity check. Run with `bash scripts/benchmark.sh`: exit 0, 4/4 tasks passed. The previous bash-only version crashed on float arithmetic and only simulated work; it was rewritten and re-verified. Does not measure the Electron UI/IPC layer.",
       "testedAt": "2026-03-30T11:40:00Z"
     },
     {
@@ -119,7 +119,7 @@
       "name": "Complete Harness",
       "description": "All harness files present: AGENTS.md, CLAUDE.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md, evaluator-rubric.md, quality-document.md, docs/",
       "status": "pass",
-      "evidence": "All files present and complete. init.sh verifies build. clean-state-checklist.md has 15 check items. docs/ has ARCHITECTURE.md, PRODUCT.md, RELIABILITY.md.",
+      "evidence": "All files present and complete. init.sh verifies build. clean-state-checklist.md has 41 check items; 18 are verified and ticked, 23 remain unchecked (need running Electron app, git state, or manual review). docs/ has ARCHITECTURE.md, PRODUCT.md, RELIABILITY.md.",
       "testedAt": "2026-03-30T11:50:00Z"
     }
   ]
