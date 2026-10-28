@@ -10,15 +10,6 @@
 
 Bạn sẽ thực hiện ba thí nghiệm tiến triển: đầu tiên biến một nhiệm vụ từ thủ công thành `/goal`, sau đó biến một nhiệm vụ giám sát thành bộ hẹn giờ `/loop`, và cuối cùng xây dựng một vòng lặp maker-checker đầy đủ để trải nghiệm cảm giác khi **bạn bước ra khỏi vòng lặp.**
 
-## Các Tệp Dự án
-
-Đường dẫn repo: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| Thư mục | Nội dung | Bạn Làm Gì |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | Một dự án cơ sở kiến thức nhỏ với một bộ harness hoàn chỉnh (trạng thái cuối của P06), bao gồm AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md. | Biến bộ harness này thành bộ có thể lặp tự động. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | Triển khai đầy đủ của ba vòng lặp: goal loop, timer loop, maker-checker loop, cộng với các file trạng thái vòng lặp và các script xác minh. | Tham khảo cho các mẫu thiết kế vòng lặp và quản lý trạng thái. |
-
 ## Công cụ Bạn Sẽ Dùng
 
 - Claude Code hoặc Codex

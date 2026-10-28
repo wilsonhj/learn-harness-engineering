@@ -10,15 +10,6 @@
 
 你會做三個遞進的實驗：先把一個任務從手動跑變成 `/goal` 自動跑，再把一個巡檢任務變成 `/loop` 定時跑，最後做一個帶 maker-checker 分離的完整循環，體驗「人退到循環外面」是什麼感覺。
 
-## 使用倉庫裡的專案
-
-倉庫路徑：[`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| 目錄 | 裡面有什麼 | 做什麼 |
-|------|----------|--------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | 一個帶有完整 harness 的小型知識庫專案（P06 完成態），包含 AGENTS.md、feature_list.json、init.sh、session-handoff.md、clean-state-checklist.md。 | 把這套 harness 改造成能自動循環的版本。 |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | 三個循環的完整實作：goal loop、loop timer loop、maker-checker loop，加上 loop 狀態檔案和驗證腳本。 | 參考 loop 的設計方式和狀態管理模式。 |
-
 ## 用什麼工具
 
 - Claude Code 或 Codex

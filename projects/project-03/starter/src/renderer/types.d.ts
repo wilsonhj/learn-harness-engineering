@@ -11,6 +11,9 @@ declare global {
         getContent: (id: string) => Promise<string | null>;
         delete: (id: string) => Promise<boolean>;
       };
+      files: {
+        getPath: (file: File) => string;
+      };
       indexing: {
         start: (documentId?: string) => Promise<import('../shared/types').AppStatus>;
         status: () => Promise<import('../shared/types').AppStatus>;

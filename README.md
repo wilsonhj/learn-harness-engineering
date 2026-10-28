@@ -694,7 +694,7 @@ learn-harness-engineering/
 ├── skills/                        # Reusable AI agent skills
 │   └── harness-creator/           # Harness engineering skill
 ├── tools/                         # Zero-dependency shell utilities
-│   └── audit-harness.sh           # Shell-based harness audit (L03–L12, no Node.js needed)
+│   └── audit-harness.sh           # Shell-based harness audit (5 subsystems + L03/L05/L07–L12, no Node.js needed)
 ├── package.json                   # VitePress + dev tooling
 └── CLAUDE.md                      # Claude Code instructions for this repo
 ```
@@ -721,15 +721,20 @@ This repository also includes reusable AI agent skills that you can install dire
 
 Zero-dependency utilities you can run without installing Node.js.
 
-- [**audit-harness.sh**](./tools/audit-harness.sh): A shell-based audit script that checks an existing repo against all five harness subsystems (L03–L12). Exits 0 when all CRITICAL items pass. No Node.js required — complements `harness-creator`'s `validate-harness.mjs`.
+- [**audit-harness.sh**](./tools/audit-harness.sh): A shell-based audit script that checks an existing repo against the five harness subsystems (Instructions, Tools, Environment, State, Feedback) plus eight lecture-specific sections (L03, L05, L07–L12), about 70 checks in all. It is read-only. Exits 0 when all CRITICAL items pass, 1 when a CRITICAL item fails, and 2 when the path is not a directory. It accepts both the course's artifacts (`claude-progress.md`, `feature_list.json` with `status`) and `PROGRESS.md` / `state` naming. No Node.js required — complements `harness-creator`'s `validate-harness.mjs`.
 
 ```bash
-# Run directly on any repo
-curl -fsSL https://raw.githubusercontent.com/walkinglabs/learn-harness-engineering/main/tools/audit-harness.sh | bash -s -- /path/to/your/repo
-
-# Or after cloning
+# Recommended: clone (or check out a release tag / commit you have reviewed), read, then run
 bash tools/audit-harness.sh /path/to/your/repo
+
+# Or download, read, then run. Set REF to a release tag or full commit SHA, not a branch name
+REF=<tag-or-commit-sha>
+curl -fsSLo audit-harness.sh "https://raw.githubusercontent.com/walkinglabs/learn-harness-engineering/${REF}/tools/audit-harness.sh"
+less audit-harness.sh                      # read it before running it
+bash audit-harness.sh /path/to/your/repo
 ```
+
+To verify the download, compare its SHA-256 against the same file in a clone at that tag or commit (`git show <REF>:tools/audit-harness.sh | sha256sum` versus `sha256sum audit-harness.sh`). No checksum is published here; do not trust one copied from the same place you downloaded the script. Avoid piping `curl` straight into `bash`.
 
 ---
 

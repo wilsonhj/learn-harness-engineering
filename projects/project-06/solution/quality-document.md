@@ -47,15 +47,15 @@
 - Clean state reset logged at WARN level
 
 ### Performance (sample data benchmarks)
-- Import 3 documents: <200ms
-- Batch indexing 3 documents: <100ms
-- Query with citations: <300ms
-- Clean state reset: <20ms
+- Import 3 documents: ~3ms (measured by `bash scripts/benchmark.sh`)
+- Batch indexing 3 documents (21 chunks): ~2ms
+- Query with citations: ~300-490ms per question (includes the mock's simulated 100-500ms delay)
+- Clean state reset: not separately timed (pass/fail check only)
 
 ## Verified Against
 
-- `clean-state-checklist.md`: All 30 checks pass
+- `clean-state-checklist.md`: 18 of 41 items verified and ticked; 23 unchecked (need running Electron app, git state, or manual review)
 - `evaluator-rubric.md`: 5.0/5 overall score
 - `feature_list.json`: 15/15 features at status "pass"
-- `bash scripts/benchmark.sh`: All tasks complete
-- `bash scripts/cleanup-scanner.sh`: No stale artifacts
+- `bash scripts/benchmark.sh`: 4/4 tasks pass against the real services (exit 0)
+- `bash scripts/cleanup-scanner.sh`: CLEAN on a freshly generated data dir (not a live app data dir)

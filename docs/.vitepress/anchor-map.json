@@ -1465,8 +1465,21 @@
       "lecture-14-code"
     ],
     "locales": {
+      "ar": 1,
+      "de": 1,
       "en": 1,
-      "zh": 1
+      "es": 1,
+      "fr": 1,
+      "ja": 1,
+      "ko": 1,
+      "pt-BR": 1,
+      "ru": 1,
+      "tr": 1,
+      "uk": 1,
+      "uz": 1,
+      "vi": 1,
+      "zh": 1,
+      "zh-TW": 1
     }
   },
   "lectures/lecture-14-graph-engineering/index.md": {
@@ -1701,7 +1714,6 @@
     "ids": [
       "project-07-build-your-first-automated-loop",
       "what-you-ll-do",
-      "project-files",
       "tools-you-ll-use",
       "steps",
       "prep",
@@ -1713,21 +1725,21 @@
       "related-lectures"
     ],
     "locales": {
-      "ar": 12,
-      "de": 12,
-      "en": 12,
-      "es": 12,
-      "fr": 12,
-      "ja": 12,
-      "ko": 12,
-      "pt-BR": 12,
-      "ru": 12,
-      "tr": 12,
-      "uk": 12,
-      "uz": 12,
-      "vi": 12,
-      "zh": 12,
-      "zh-TW": 12
+      "ar": 11,
+      "de": 11,
+      "en": 11,
+      "es": 11,
+      "fr": 11,
+      "ja": 11,
+      "ko": 11,
+      "pt-BR": 11,
+      "ru": 11,
+      "tr": 11,
+      "uk": 11,
+      "uz": 11,
+      "vi": 11,
+      "zh": 11,
+      "zh-TW": 11
     }
   },
   "projects/project-08-graph-engineering-first-graph/index.md": {

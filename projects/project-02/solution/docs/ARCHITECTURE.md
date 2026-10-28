@@ -77,7 +77,7 @@ The document import flow demonstrates the full IPC data path:
 1. User clicks "Import" button in App.tsx
 2. ImportPanel renders file input
 3. User selects a .txt or .md file
-4. ImportPanel calls onImport(file.path)
+4. ImportPanel resolves the real path via window.knowledgeBase.files.getPath(file) (preload webUtils.getPathForFile) and calls onImport(filePath)
 5. App.tsx calls window.knowledgeBase.documents.import(filePath)
 6. Preload bridge invokes ipcRenderer.invoke('documents:import', filePath)
 7. ipc-handlers.ts delegates to DocumentService.importDocument(filePath)

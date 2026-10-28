@@ -10,15 +10,6 @@ C'est le projet de transition de « Harness » vers « Boucle ». Vous savez dé
 
 Vous ferez trois expériences progressives : d'abord transformer une tâche de manuel en `/goal`, puis transformer une tâche de surveillance en une minuterie `/loop`, et enfin construire une boucle maker-checker complète pour ressentir ce que c'est que **de sortir de la boucle.**
 
-## Fichiers du projet
-
-Chemin du dépôt : [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| Répertoire | Ce qu'il contient | Ce que vous faites |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | Un petit projet de base de connaissances avec un harness complet (état final P06), incluant AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md. | Transformez ce harness en un harness qui peut boucler automatiquement. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | Implémentations complètes de trois boucles : boucle de but, boucle de minuterie, boucle maker-checker, plus fichiers d'état de boucle et scripts de vérification. | Référence pour les modèles de conception de boucles et la gestion d'état. |
-
 ## Outils que vous allez utiliser
 
 - Claude Code ou Codex

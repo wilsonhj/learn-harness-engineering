@@ -10,15 +10,6 @@ Bu "Harness" dan "Loop" ga oʻtish loyihasi. Siz allaqachon agentni toʻgʻri mu
 
 Siz uchta progressiv eksperiment qilasiz: avval vazifani qoʻldan `/goal` ga aylantirasiz, keyin kuzatuv vazifasini `/loop` taymeriga aylantirasiz va nihoyat toʻliq maker-checker loopʼini qurib, **siz loop tashqarisiga chiqsangiz** nima his qilishni boshdan kechirasiz.
 
-## Loyiha fayllari
-
-Repo yoʻli: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| Katalog | Ichida nima bor | Nima qilasiz |
-|---------|----------------|--------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | Toʻliq harness (P06 oxirgi holati) bilan kichik bilim bazasi loyihasi, jumladan AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md. | Ushbu harnessni avtomatik loop qilishi mumkin boʻlgan holatga keltiring. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | Uchta loopʼning toʻliq implementatsiyasi: goal loop, timer loop, maker-checker loop, plus loop holat fayllari va tekshirish skriptlari. | Loop dizayn naqshlari va holat boshqaruvi uchun mos yozuv. |
-
 ## Foydalanadigan vositalar
 
 - Claude Code yoki Codex

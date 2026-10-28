@@ -17,79 +17,80 @@ export interface Services {
 
 export function registerIpcHandlers(ipcMain: IpcMain, services: Services) {
   const { documentService, indexingService, qaService, persistence } = services;
+  const log = logger.forService(SERVICE);
 
   // ---- Document operations ----
 
   ipcMain.handle(IPC_CHANNELS.LIST_DOCUMENTS, async () => {
-    logger.debug(SERVICE, 'IPC: LIST_DOCUMENTS');
+    log.debug('IPC: LIST_DOCUMENTS');
     return documentService.listDocuments();
   });
 
   ipcMain.handle(IPC_CHANNELS.IMPORT_DOCUMENT, async (_event, filePath: string) => {
-    logger.info(SERVICE, 'IPC: IMPORT_DOCUMENT', { filePath });
+    log.info('IPC: IMPORT_DOCUMENT', { filePath });
     return documentService.importDocument(filePath);
   });
 
   ipcMain.handle(IPC_CHANNELS.GET_DOCUMENT, async (_event, id: string) => {
-    logger.debug(SERVICE, 'IPC: GET_DOCUMENT', { id });
+    log.debug('IPC: GET_DOCUMENT', { id });
     return documentService.getDocument(id);
   });
 
   ipcMain.handle(IPC_CHANNELS.DELETE_DOCUMENT, async (_event, id: string) => {
-    logger.info(SERVICE, 'IPC: DELETE_DOCUMENT', { id });
+    log.info('IPC: DELETE_DOCUMENT', { id });
     return documentService.deleteDocument(id);
   });
 
   // ---- Indexing ----
 
   ipcMain.handle(IPC_CHANNELS.START_INDEXING, async (_event, documentId?: string) => {
-    logger.info(SERVICE, 'IPC: START_INDEXING', { documentId: documentId ?? 'all' });
+    log.info('IPC: START_INDEXING', { documentId: documentId ?? 'all' });
     return indexingService.startIndexing(documentId);
   });
 
   ipcMain.handle(IPC_CHANNELS.GET_INDEXING_STATUS, async () => {
-    logger.debug(SERVICE, 'IPC: GET_INDEXING_STATUS');
+    log.debug('IPC: GET_INDEXING_STATUS');
     return indexingService.getStatus();
   });
 
   ipcMain.handle(IPC_CHANNELS.GET_CHUNKS, async (_event, documentId: string) => {
-    logger.debug(SERVICE, 'IPC: GET_CHUNKS', { documentId });
+    log.debug('IPC: GET_CHUNKS', { documentId });
     return indexingService.getChunksForDocument(documentId);
   });
 
   // ---- Q&A ----
 
   ipcMain.handle(IPC_CHANNELS.ASK_QUESTION, async (_event, question: string) => {
-    logger.info(SERVICE, 'IPC: ASK_QUESTION', { question });
+    log.info('IPC: ASK_QUESTION', { question });
     return qaService.ask(question);
   });
 
   ipcMain.handle(IPC_CHANNELS.GET_HISTORY, async () => {
-    logger.debug(SERVICE, 'IPC: GET_HISTORY');
+    log.debug('IPC: GET_HISTORY');
     return qaService.getHistory();
   });
 
   ipcMain.handle(IPC_CHANNELS.CLEAR_HISTORY, async () => {
-    logger.info(SERVICE, 'IPC: CLEAR_HISTORY');
+    log.info('IPC: CLEAR_HISTORY');
     return qaService.clearHistory();
   });
 
   // ---- Feedback ----
 
   ipcMain.handle(IPC_CHANNELS.SUBMIT_FEEDBACK, async (_event, qaTimestamp: string, question: string, rating: 'positive' | 'negative', comment?: string) => {
-    logger.info(SERVICE, 'IPC: SUBMIT_FEEDBACK', { qaTimestamp, rating });
+    log.info('IPC: SUBMIT_FEEDBACK', { qaTimestamp, rating });
     return qaService.submitFeedback(qaTimestamp, question, rating, comment ?? '');
   });
 
   ipcMain.handle(IPC_CHANNELS.GET_FEEDBACK, async () => {
-    logger.debug(SERVICE, 'IPC: GET_FEEDBACK');
+    log.debug('IPC: GET_FEEDBACK');
     return qaService.getFeedback();
   });
 
   // ---- Clean state ----
 
   ipcMain.handle(IPC_CHANNELS.RESET_DATA, async () => {
-    logger.warn(SERVICE, 'IPC: RESET_DATA -- resetting all application data');
+    log.warn('IPC: RESET_DATA -- resetting all application data');
     persistence.resetAll();
     return { success: true };
   });
@@ -97,11 +98,11 @@ export function registerIpcHandlers(ipcMain: IpcMain, services: Services) {
   // ---- App status ----
 
   ipcMain.handle(IPC_CHANNELS.GET_STATUS, async () => {
-    logger.debug(SERVICE, 'IPC: GET_STATUS');
+    log.debug('IPC: GET_STATUS');
     return indexingService.getStatus();
   });
 
-  logger.info(SERVICE, 'All IPC handlers registered', {
+  log.info('All IPC handlers registered', {
     channels: Object.values(IPC_CHANNELS).length,
   });
 }

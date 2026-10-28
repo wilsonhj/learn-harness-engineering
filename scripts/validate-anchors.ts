@@ -13,11 +13,13 @@
 // - Reordering sections without changing the count is not detected here. It
 //   would silently mis-map ids, so reorder English and the locale together.
 //
-// 15 pages have known structure drift and intentionally keep localized ids:
+// 16 pages have known structure drift and intentionally keep localized ids:
 // lecture-11 and lecture-12 in 9 locales each (ar, de, es, fr, ja, ko, ru, tr,
-// uz), project-01 in 13, projects 02-06 in zh/zh-TW, six resources pages
-// (openai-advanced, reference, templates, plus two repo-template files), and
-// harness-designs/codex in zh. Cross-language anchor links do not resolve on
+// uz), project-01 in 13, projects 02-06 in zh/zh-TW, harness-designs/claude-code
+// in 13, harness-designs/codex in zh, and six resources pages (openai-advanced,
+// reference, templates, plus three repo-template files). The count in the
+// "Note:" line printed below is derived from the map; update this comment if it
+// changes. Cross-language anchor links do not resolve on
 // those pages. This is not a bug to fix: the translations are structurally
 // different documents, and for the project pages the Chinese is more complete
 // than the English stub. They are reported below as a note and do not fail.

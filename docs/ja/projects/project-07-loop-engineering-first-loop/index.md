@@ -10,15 +10,6 @@
 
 3つの段階的な実験を行います：まずタスクを手動から `/goal` に変え、次に監視タスクを `/loop` タイマーに変え、最後に完全なmaker-checkerループを構築して、**あなたがループの外側に出る**とはどういうことかを体験します。
 
-## プロジェクトファイル
-
-リポジトリパス: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| ディレクトリ | 中身 | あなたがすること |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | 完全なハーネス（P06最終状態）を備えた小さなナレッジベースプロジェクト。AGENTS.md、feature_list.json、init.sh、session-handoff.md、clean-state-checklist.md を含む。 | このハーネスを自動でループできるものに変える。 |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | 3つのループの完全な実装：ゴールループ、タイマーループ、maker-checkerループ。ループ状態ファイルと検証スクリプトも含む。 | ループ設計パターンと状態管理のリファレンス。 |
-
 ## 使用するツール
 
 - Claude Code または Codex

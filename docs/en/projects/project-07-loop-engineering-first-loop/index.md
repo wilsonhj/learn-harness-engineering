@@ -8,15 +8,6 @@ This is the transition project from "Harness" to "Loop." You already know how to
 
 You'll do three progressive experiments: first turn a task from manual to `/goal`, then turn a monitoring task into a `/loop` timer, and finally build a full maker-checker loop to experience what it feels like when **you step outside the loop.**
 
-## Project Files
-
-Repo path: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| Directory | What's Inside | What You Do |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | A small knowledge base project with a complete harness (P06 final state), including AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md. | Turn this harness into one that can loop automatically. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | Full implementations of three loops: goal loop, timer loop, maker-checker loop, plus loop state files and verification scripts. | Reference for loop design patterns and state management. |
-
 ## Tools You'll Use
 
 - Claude Code or Codex

@@ -10,15 +10,6 @@
 
 Ви проведете три поступових експерименти: спочатку перетворите завдання з ручного на `/goal`, потім перетворите завдання моніторингу на таймер `/loop`, і нарешті побудуєте повний цикл maker-checker, щоб відчути, що це коли **ви виходите за межі циклу.**
 
-## Файли проекту
-
-Шлях до репозиторію: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| Директорія | Що всередині | Що ви робите |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | Невеликий проект бази знань із повним hарнесом (кінцевий стан P06), включаючи AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md. | Перетворіть цей hарнес на такий, що може циклічно працювати автоматично. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | Повні реалізації трьох циклів: цикл мети, цикл таймера, цикл maker-checker, плюс файли стану циклу та скрипти перевірки. | Довідник з патернів проєктування циклів та управління станом. |
-
 ## Інструменти, які ви використовуватимете
 
 - Claude Code або Codex

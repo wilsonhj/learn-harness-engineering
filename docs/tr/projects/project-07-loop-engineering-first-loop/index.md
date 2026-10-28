@@ -10,15 +10,6 @@ Bu, "Harness"tan "Loop"a geçiş projesidir. Bir ajanı uygun ortam, talimatlar 
 
 Üç ilerici deney yapacaksınız: önce bir görevi manuelden `/goal`'a dönüştüreceksiniz, sonra bir izleme görevini `/loop` zamanlayıcısına dönüştüreceksiniz ve son olarak **loop'un dışına çıktığınızda** ne hissettiğini deneyimlemek için tam bir maker-checker loop'u oluşturacaksınız.
 
-## Proje Dosyaları
-
-Depo yolu: [`projects/project-07/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07)
-
-| Dizin | İçerik | Ne Yaparsınız |
-|-----------|--------------|-------------|
-| [`starter/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/starter) | Tam bir harness (P06 son durumu) içeren küçük bir bilgi tabanı projesi, AGENTS.md, feature_list.json, init.sh, session-handoff.md, clean-state-checklist.md dahil. | Bu harness'i otomatik olarak dönebilen bir hale getirin. |
-| [`solution/`](https://github.com/walkinglabs/learn-harness-engineering/tree/main/projects/project-07/solution) | Üç loop'un tam uygulamaları: hedef loop'u, zamanlayıcı loop'u, maker-checker loop'u, artı loop durum dosyaları ve doğrulama betikleri. | Loop tasarım desenleri ve durum yönetimi için referans. |
-
 ## Kullanacağınız Araçlar
 
 - Claude Code veya Codex
